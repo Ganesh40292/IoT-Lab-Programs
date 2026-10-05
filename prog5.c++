@@ -1,67 +1,30 @@
-#define PIEZO_PIN 9
+void setup(){
 
-const int trigger = 6;
-const int echo = 7;
-const int soundPin = A0;
+  pinMode(8,INPUT);
 
-const float DIST_THRESHOLD = 5.0;
-const int SOUND_THRESHOLD = 520;
+  pinMode(9,OUTPUT);
 
-void setup() {
   Serial.begin(9600);
 
-  pinMode(trigger, OUTPUT);
-  pinMode(echo, INPUT);
-  pinMode(PIEZO_PIN, OUTPUT);
 }
 
-void loop() {
-  // Trigger ultrasonic sensor
-  digitalWrite(trigger, LOW);
-  delayMicroseconds(5);
+void loop(){
 
-  digitalWrite(trigger, HIGH);
-  delayMicroseconds(10);
+  int temp=digitalRead(8);
 
-  digitalWrite(trigger, LOW);
+  Serial.println("Intensity=");
 
-  // Read echo
-  unsigned long duration = pulseIn(echo, HIGH, 30000);
+  Serial.println(temp);
 
-  // Calculate distance in inches
-  float dist_inches = duration / 148.0;
+  delay(300);
 
-  // Read sound sensor
-  int soundValue = analogRead(soundPin);
+  if(temp==LOW)
 
-  // Check for valid ultrasonic reading
-  bool objectDetected = (duration > 0 && dist_inches < DIST_THRESHOLD);
-  bool soundDetected = (soundValue > SOUND_THRESHOLD);
+  digitalWrite(9,HIGH);
 
-  if (objectDetected && soundDetected) {
+  else
 
-    tone(PIEZO_PIN, 1500);
-    delay(100);
-    noTone(PIEZO_PIN);
+  digitalWrite(9,LOW);
 
-    Serial.print("Intrusion Detected! Object with sound at distance: ");
-    Serial.print(dist_inches);
-    Serial.println(" in");
+} 
 
-  } else if (objectDetected) {
-
-    Serial.print("Object detected at distance: ");
-    Serial.print(dist_inches);
-    Serial.println(" in");
-
-  } else if (soundDetected) {
-
-    Serial.println("Sound detected!");
-
-  } else {
-
-    Serial.println("No intrusion detected.");
-  }
-
-  delay(100);
-}
